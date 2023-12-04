@@ -50,8 +50,9 @@ def plate_detection(image):
     y = c[:, :, 1]
     min_x, max_x, min_y, max_y = int(min(x)), int(max(x)), int(min(y)), int(max(y))
 
+    aspect_ratio=(max_x - min_x) / (max_y - min_y)
     # Check the aspect ratio
-    if 4 >= (max_x - min_x) / (max_y - min_y) >= 6:
+    if aspect_ratio<2 or aspect_ratio>8:
         return None
 
     img_cropped = image[min_y:max_y, min_x:max_x]
