@@ -20,6 +20,36 @@ def plate_detection(image):
     """
 
     # TODO: Replace the below lines with your code.
-    plate_images = [image, image, image]
-    return plate_images
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
+    colorMin = np.array([15, 50, 50])
+    colorMax = np.array([30, 256, 256])
+
+    mask = cv2.inRange(hsv, colorMin, colorMax)
+
+    c, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    plates = []
+    marked = image.copy()
+    marked = cv2.cvtColor(marked, cv2.COLOR_BGR2RGB)
+    img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    for contour in c:
+        area = cv2.contourArea(contour)
+        if area > 2000:
+            plates.append(contour)
+    if len(plates)>0:
+        c = plates[0]
+
+        x = c[:, :, 0]
+        y = c[:, :, 1]
+
+        minx = int(min(x))
+        maxx = int(max(x))
+        miny = int(min(y))
+        maxy = int(max(y))
+
+        cropimg = image[miny:maxy, minx:maxx]
+
+
+        return cropimg
+    return None
