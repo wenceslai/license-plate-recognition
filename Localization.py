@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from matplotlib import pyplot as plt
 
 
 def plate_detection(image):
@@ -24,7 +25,7 @@ def plate_detection(image):
 
     # Apply Gaussian filter to each channel
     h, s, v = cv2.split(img_hsv)
-    blurred_v = cv2.GaussianBlur(v, (5, 5), 0)
+    blurred_v = cv2.GaussianBlur(v, (5, 5), 0)  # TODO: make sure it's correct blur method for hsv
     img_hsv = cv2.merge([h, s, blurred_v])
 
     # Colour segmentation
@@ -32,8 +33,14 @@ def plate_detection(image):
     colorMax = np.array([30, 256, 256])
     mask = cv2.inRange(img_hsv, colorMin, colorMax)
 
+    # Apply erosion and dilation to remove noise
+    kernel_size = 3
+    erosion_kernel = np.ones((kernel_size, kernel_size), np.uint8)
+    mask = cv2.erode(mask, erosion_kernel, iterations=1)
+    dilation_kernel = np.ones((kernel_size, kernel_size), np.uint8)
+    mask = cv2.dilate(mask, dilation_kernel, iterations=1)
+
     # TODO: apply contour search on the result of edge detection
-    # TODO: add morphological techniques to make the edge more robust?
 
     # Find the contour clusters
     contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -55,5 +62,7 @@ def plate_detection(image):
         return None
 
     img_cropped = image[min_y:max_y, min_x:max_x]
+
+    # TODO: add a majority classifier in combination with scene change
 
     return img_cropped
