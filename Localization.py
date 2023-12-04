@@ -19,37 +19,41 @@ def plate_detection(image):
         2. You may need to define two ways for localizing plates(yellow or other colors)
     """
 
-    # TODO: Replace the below lines with your code.
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    # Convert the img to hsv spectrum
+    img_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
+    # Apply Gaussian filter to each channel
+    h, s, v = cv2.split(img_hsv)
+    blurred_v = cv2.GaussianBlur(v, (5, 5), 0)
+    img_hsv = cv2.merge([h, s, blurred_v])
+
+    # Colour segmentation
     colorMin = np.array([15, 50, 50])
     colorMax = np.array([30, 256, 256])
+    mask = cv2.inRange(img_hsv, colorMin, colorMax)
 
-    mask = cv2.inRange(hsv, colorMin, colorMax)
+    # TODO: apply contour search on the result of edge detection
+    # TODO: add morphological techniques to make the edge more robust?
 
-    c, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    plates = []
-    marked = image.copy()
-    marked = cv2.cvtColor(marked, cv2.COLOR_BGR2RGB)
-    img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # Find the contour clusters
+    contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
-    for contour in c:
-        area = cv2.contourArea(contour)
-        if area > 2000:
-            plates.append(contour)
-    if len(plates)>0:
-        c = plates[0]
+    # Filter out contours that are too small
+    plates = [c for c in contours if cv2.contourArea(c) > 2000]  # TODO: Tune the area parameter
 
-        x = c[:, :, 0]
-        y = c[:, :, 1]
+    if len(plates) == 0:
+        return None
 
-        minx = int(min(x))
-        maxx = int(max(x))
-        miny = int(min(y))
-        maxy = int(max(y))
+    # Fit the bounding box
+    c = plates[0]
+    x = c[:, :, 0]
+    y = c[:, :, 1]
+    min_x, max_x, min_y, max_y = int(min(x)), int(max(x)), int(min(y)), int(max(y))
 
-        cropimg = image[miny:maxy, minx:maxx]
+    # Check the aspect ratio
+    if 4 >= (max_x - min_x) / (max_y - min_y) >= 6:
+        return None
 
+    img_cropped = image[min_y:max_y, min_x:max_x]
 
-        return cropimg
-    return None
+    return img_cropped

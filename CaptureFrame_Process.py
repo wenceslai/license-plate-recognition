@@ -20,11 +20,12 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
     Output: None
     """
     print(file_path)
-    directory = r'C:\Users\Pc\Desktop\License\testimages'
+    directory = r'testimages'
     # TODO: Read frames from the video (saved at `file_path`) by making use of `sample_frequency`
     video = cv2.VideoCapture(file_path)
 
     fps = video.get(cv2.CAP_PROP_FPS)
+
     total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
     frame_interval = int(fps / sample_frequency)
@@ -48,7 +49,7 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
 
         # TODO: Implement actual algorithms for Recognizing Characters
         if plate is not None:
-            cv2.imwrite(directory+'\im'+str(i)+'.jpg',plate )
+            cv2.imwrite(os.path.join(directory, 'im' + str(i)+'.jpg'), plate)
 
         output = open(save_path, "w")
         output.write("License plate,Frame no.,Timestamp(seconds)\n")
