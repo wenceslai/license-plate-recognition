@@ -19,7 +19,7 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
         3. save_path: final .csv file path
     Output: None
     """
-    print(file_path)
+
     directory = r'testimages'
     # TODO: Read frames from the video (saved at `file_path`) by making use of `sample_frequency`
     video = cv2.VideoCapture(file_path)
@@ -45,7 +45,7 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
     i=-1
     for frame in frames:
         i+=1
-        plate = Localization.plate_detection(frame)
+        plate, _ = Localization.plate_detection(frame)
 
         # TODO: Implement actual algorithms for Recognizing Characters
         if plate is not None:

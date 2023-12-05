@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 
 
 def plate_detection(image):
@@ -48,6 +47,8 @@ def plate_detection(image):
     # Filter out contours that are too small
     plates = [c for c in contours if cv2.contourArea(c) > 2000]  # TODO: Tune the area parameter
 
+    # TODO: deal with rotations
+
     if len(plates) == 0:
         return None
 
@@ -57,12 +58,15 @@ def plate_detection(image):
     y = c[:, :, 1]
     min_x, max_x, min_y, max_y = int(min(x)), int(max(x)), int(min(y)), int(max(y))
 
+    aspect_ratio=(max_x - min_x) / (max_y - min_y)
     # Check the aspect ratio
-    if 4 >= (max_x - min_x) / (max_y - min_y) >= 6:
+    if aspect_ratio<2 or aspect_ratio>8:  # TODO: first check aspect ration, then select the largest contour cluster
         return None
 
     img_cropped = image[min_y:max_y, min_x:max_x]
 
+    bbs = [[min_x, min_y, max_x, max_y]]
+
     # TODO: add a majority classifier in combination with scene change
 
-    return img_cropped
+    return img_cropped, bbs
