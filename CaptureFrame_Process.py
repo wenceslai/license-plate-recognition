@@ -45,7 +45,7 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
     i=-1
     for frame in frames:
         i+=1
-        plate = Localization.plate_detection(frame)
+        plate, _ = Localization.plate_detection(frame)
 
         # TODO: Implement actual algorithms for Recognizing Characters
         if plate is not None:
