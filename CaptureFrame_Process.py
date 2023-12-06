@@ -20,7 +20,7 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
     Output: None
     """
 
-    directory = r'testimages'
+    directory = r'output-images'
     # TODO: Read frames from the video (saved at `file_path`) by making use of `sample_frequency`
     video = cv2.VideoCapture(file_path)
 

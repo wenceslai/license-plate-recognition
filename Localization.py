@@ -1,6 +1,5 @@
 import copy
 import time
-
 import cv2
 import numpy as np
 
@@ -45,8 +44,8 @@ def plate_detection(image):
     dilation_kernel = np.ones((kernel_size, kernel_size), np.uint8)
     mask = cv2.dilate(mask, dilation_kernel, iterations=1)
 
-    t = time.time()
-    #cv2.imwrite(f"debugimages/test{t}.png", mask)
+    #t = time.time()
+    #cv2.imwrite(f"debug-images/test{t}.png", mask)
 
     # TODO: apply contour search on the result of edge detection
 
@@ -56,13 +55,17 @@ def plate_detection(image):
 
     # Filter out contours that are too small
     plates = [c for c in contours if cv2.contourArea(c) > 2000]  # TODO: Tune the area parameter
-    print([cv2.contourArea(c) for c in plates])
+
+    #print([cv2.contourArea(c) for c in plates])
+
     # TODO: deal with rotations
 
+    # If no plate cluster were found terminate
     if len(plates) == 0:
-        #cv2.imwrite(f"debugimages/test{t}FAILABOVEnothing.png", np.ones((5, 5)))
+        #cv2.imwrite(f"debug-images/test{t}FAILABOVEnothing.png", np.ones((5, 5)))
         return None
 
+    # Iterate over top 3 biggest clusters and try to find one with a matching aspect ratio
     tries = 0
     found_plate = False
     while tries < 3 and tries < len(plates):
@@ -76,7 +79,7 @@ def plate_detection(image):
 
         # Check the aspect ratio
         if aspect_ratio < 2 or aspect_ratio > 8:  # TODO: first rotate the plate, then check the ratio
-            #cv2.imwrite(f"debugimages/test{t}FAILABOVE.png", np.ones((5, 5)))
+            #cv2.imwrite(f"debug-images/test{t}FAILABOVE.png", np.ones((5, 5)))
             tries += 1
         else:
             found_plate = True
