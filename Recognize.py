@@ -101,7 +101,41 @@ def crop(image):
 
 	return chars_cropped
 
+def lowest_score(test_image,character_set,reference_characters):
+    # Get the difference score with each of the reference characters
+    # (or only keep track of the lowest score)
+    mini=9999999
+    ans='A'
+    for char in character_set:
+        score=difference_score(test_image, reference_characters[char])
+        if score<mini:
+            mini=score
+            ans=char
+    # Return a single character based on the lowest score
+    return ans
 
-def recognise(image):
+def difference_score(test_image, reference_character):
+    # XOR images
+    res = cv2.bitwise_xor(test_image, reference_character)
+    # Return the number of non-zero pixels
+    return np.count_nonzero(res)
 
+def recogniseletter(image):
+	resized_image=cv2.resize(image,(70,85))
+	path='dataset\Characters'
 
+	total_set = set(['B', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P','R','S','T','V','X','Z','0','1','2','3','4','5','6','7','8','9'])
+
+	reference_characters = {}
+	for char in total_set:
+		reference_characters[char] = cv2.imread(path+'\\'+char+'.bmp',cv2.IMREAD_GRAYSCALE)
+
+	result = lowest_score(resized_image,total_set,reference_characters)
+	return result
+
+def recognise(images):
+	result=""
+	for image in images:
+		letter=recogniseletter(image)
+		result=result + letter
+	return result
