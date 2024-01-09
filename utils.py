@@ -33,3 +33,13 @@ def get_filenames(directory):
         if os.path.isfile(os.path.join(directory, filename)):
             filenames.append(filename)
     return filenames
+
+
+def crop_by_percentage(img, scale_width, scale_height):
+    center_x, center_y = img.shape[1] / 2, img.shape[0] / 2
+    width_scaled, height_scaled = img.shape[1] * scale_width, img.shape[0] * scale_height
+    left_x, right_x = center_x - width_scaled / 2, center_x + width_scaled / 2
+    top_y, bottom_y = center_y - height_scaled / 2, center_y + height_scaled / 2
+    img_cropped = img[int(top_y):int(bottom_y), int(left_x):int(right_x)]
+
+    return img_cropped
