@@ -20,20 +20,43 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
     Output: None
     """
 
+    directory = r'output-images'
     # TODO: Read frames from the video (saved at `file_path`) by making use of `sample_frequency`
-    frame = None
+    video = cv2.VideoCapture(file_path)
+
+    fps = video.get(cv2.CAP_PROP_FPS)
+
+    total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    frame_interval = int(fps / sample_frequency)
+
+    frames = []
+
+    for frame_count in range(0, total_frames, frame_interval):
+        # Set the frame position
+        video.set(cv2.CAP_PROP_POS_FRAMES, frame_count)
+
+        ret, frame = video.read()
+
+        if ret:
+            frames.append(frame)
 
     # TODO: Implement actual algorithms for Localizing Plates
-    Localization.plate_detection(frame)
+    i=-1
+    for frame in frames:
+        i+=1
+        plate, _ = Localization.plate_detection(frame)
 
-    # TODO: Implement actual algorithms for Recognizing Characters
+        # TODO: Implement actual algorithms for Recognizing Characters
+        if plate is not None:
+            cv2.imwrite(os.path.join(directory, 'im' + str(i)+'.jpg'), plate)
 
-    output = open(save_path, "w")
-    output.write("License plate,Frame no.,Timestamp(seconds)\n")
+        output = open(save_path, "w")
+        output.write("License plate,Frame no.,Timestamp(seconds)\n")
 
-    # TODO: REMOVE THESE (below) and write the actual values in `output`
-    output.write("XS-NB-23,34,1.822\n")
-    # output.write("YOUR,STUFF,HERE\n")
-    # TODO: REMOVE THESE (above) and write the actual values in `output`
+        # TODO: REMOVE THESE (below) and write the actual values in `output`
+        output.write("XS-NB-23,34,1.822\n")
+        # output.write("YOUR,STUFF,HERE\n")
+        # TODO: REMOVE THESE (above) and write the actual values in `output`
 
     pass
