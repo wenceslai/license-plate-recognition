@@ -27,7 +27,6 @@ def plate_detection(image):
     # Removing noise
     image = cv2.GaussianBlur(image, (5, 5), 0)
     image = cv2.medianBlur(image, 5)
-    image = cv2.medianBlur(image, 5)
 
     # Convert the img to hsv spectrum
     img_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
