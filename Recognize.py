@@ -103,5 +103,6 @@ def crop(image):
 
 
 def recognise(image):
+	pass
 
 
