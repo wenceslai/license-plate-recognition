@@ -1,4 +1,6 @@
 import os
+import re
+
 import matplotlib.pyplot as plt
 
 def intersection_over_union(box_a, box_b):
@@ -50,3 +52,47 @@ def plotImage(img, title=""):
     plt.imshow(img, cmap=plt.cm.gray, vmin=0, vmax=255)
     plt.title(title)
     plt.show()
+
+def fill_dashes(s):
+    if len(s) != 6: return None
+
+    if re.search(r'\d{2}[A-Z]{4}', s):
+        return s[0] + s[1] + "-" + s[2] + s[3] + "-" + s[4] + s[5]
+
+    elif re.search(r'\d{2}[A-Z]{2}\d{2}', s):
+        return s[0] + s[1] + "-" + s[2] + s[3] + "-" + s[4] + s[5]
+
+    elif re.search(r'\d{2}[A-Z]{3}\d{1}', s):
+        return s[0] + s[1] + "-" + s[2] + s[3] + s[4] + "-" + s[5]
+
+    elif re.search(r'\d{1}[A-Z]{3}\d{2}', s):
+        return s[0] + "-" + s[1] + s[2] + s[3] + "-" + s[4] + s[5]
+
+    elif re.search(r'[A-Z]{2}\d{3}[A-Z]', s):
+        return s[0] + s[1] + "-" + s[2] + s[3] + s[4] + "-" + s[5]
+
+    elif re.search(r'[A-Z]\d{3}[A-Z]{2}', s):
+        return s[0] + "-" + s[1] + s[2] + s[3] + "-" + s[4] + s[5]
+
+    elif re.search(r'[A-Z]{3}\d{2}[A-Z]', s):
+        return s[0] + s[1] + s[2] + "-" + s[3] + s[4] + "-" + s[5]
+
+    elif re.search(r'[A-Z]{1}\d{2}[A-Z]{3}', s):
+        return s[0] + "-" + s[1] + s[2] + "-" + s[3] + s[4] + s[5]
+
+    elif re.search(r'\d{1}[A-Z]{2}\d{3}', s):
+        return s[0] + "-" + s[1] + s[2] + "-" + s[3] + s[4] + s[5]
+
+    elif re.search(r'\d{3}[A-Z]{2}\d{1}', s):
+        return s[0] + s[1] + s[2] + "-" + s[3] + s[4] + "-" + s[5]
+
+    elif re.search(r'[A-Z]{2}\d{2}[A-Z]{2}', s):
+        return s[0] + s[1] + "-" + s[2] + s[3] + "-" + s[4] + s[5]
+
+    elif re.search(r'[A-Z]{4}\d{2}', s):
+        return s[0] + s[1] + "-" + s[2] + s[3] + "-" + s[4] + s[5]
+
+    else:
+        return None
+
+

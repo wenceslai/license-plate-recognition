@@ -3,8 +3,8 @@ import time
 import cv2
 import numpy as np
 import os
-from utils import crop_by_percentage
-from utils import plotImage
+from utils import crop_by_percentage, plotImage, fill_dashes
+
 
 def segment_and_recognize(plate_images):
     """
@@ -28,8 +28,12 @@ def segment_and_recognize(plate_images):
         image = preprocess(image)
         char_images = crop(image)
         plate_string = recognise(char_images)
+        plate_string_dashes = fill_dashes(plate_string)
 
-        recognized_plates.append(plate_string)
+        if plate_string_dashes is None:
+            plate_string_dashes = plate_string + "(none)"
+
+        recognized_plates.append(plate_string_dashes)
 
     # TODO: majority voting
 
@@ -95,6 +99,10 @@ def crop(image):
             if len(char_index_ranges) > 0 and len(char_index_ranges[-1]) == 1:
                 char_index_ranges[-1].append(j - 1)
 
+    # if no last column with no white pixels found use the last one
+    if len(char_index_ranges[-1]) == 1:
+        char_index_ranges[-1].append(image.shape[1] - 1)
+
     # Crop characters
     chars = []
     for char_range in char_index_ranges:
@@ -113,12 +121,17 @@ def crop(image):
             elif pixel_sum < 8 and top_index is not None:
                 bottom_index = i - 1
                 break
+        # if no last column with no white pixels found use the last one
+        if bottom_index is None:
+            bottom_index = char.shape[0] - 1
 
         # Filter out dashes
         if (bottom_index - top_index) / char.shape[0] < 0.3:
             continue
 
         chars_cropped.append(char[top_index: bottom_index + 1, :])
+
+        char_index_ranges[-1].append(image.shape[1] - 1)
 
     for i, img in enumerate(chars_cropped):
         cv2.imwrite(f"debug-images/croppedchar{i}.png", img)
@@ -176,10 +189,12 @@ def recogniseletter(image):
 
 if __name__ == "__main__":
     # This block will be executed only if the script is run directly
-    plate = "96-ND-JB"
+    #plate = "96-ND-JB"
+    plate = "23-GSX-6"
     #plate = "5-SXB-74"
+    #plate = "01-XJ-ND"
 
-    img = cv2.imread(os.path.join("train-set-recognition", plate + ".jpg"), cv2.IMREAD_UNCHANGED)
+    img = cv2.imread(os.path.join("test-set-recognition", plate + ".jpg"), cv2.IMREAD_UNCHANGED)
 
     res = segment_and_recognize([img])
 
