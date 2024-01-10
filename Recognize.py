@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import os
 from utils import crop_by_percentage
+from utils import plotImage
 
 def segment_and_recognize(plate_images):
     """
@@ -139,7 +140,8 @@ def lowest_score(test_image, character_set, reference_characters):
     mini = 9999999
     ans = None
     for char in character_set:
-        score = difference_score(test_image, reference_characters[char])
+        resized_reference=cv2.resize(reference_characters[char], (70, 85))
+        score = difference_score(test_image,resized_reference)
         if score < mini:
             mini = score
             ans = char
@@ -156,22 +158,25 @@ def difference_score(test_image, reference_character):
 
 def recogniseletter(image):
     resized_image = cv2.resize(image, (70, 85))
-    path = 'dataset\Characters'
+    #plotImage(image)
+    path = 'dataset\CharactersDifferentSizes'
 
     total_set = {'B', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'X', 'Z', '0', '1', '2',
                  '3', '4', '5', '6', '7', '8', '9'}
 
     reference_characters = {}
     for char in total_set:
-        reference_characters[char] = cv2.imread(os.path.join("dataset", "Characters", char + ".bmp"), cv2.IMREAD_GRAYSCALE)
+        reference_characters[char] = cv2.imread(os.path.join("dataset", "CharactersDifferentSizes", char + ".bmp"), cv2.IMREAD_GRAYSCALE)
 
     result = lowest_score(resized_image, total_set, reference_characters)
+    resized_reference = cv2.resize(reference_characters[result], (70, 85))
+    #plotImage(resized_reference)
     return result
 
 
 if __name__ == "__main__":
     # This block will be executed only if the script is run directly
-    plate = "01-XJ-ND"
+    plate = "96-ND-JB"
     #plate = "5-SXB-74"
 
     img = cv2.imread(os.path.join("train-set-recognition", plate + ".jpg"), cv2.IMREAD_UNCHANGED)

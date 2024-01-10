@@ -1,4 +1,5 @@
 import os
+import matplotlib.pyplot as plt
 
 def intersection_over_union(box_a, box_b):
     """
@@ -43,3 +44,9 @@ def crop_by_percentage(img, scale_width, scale_height):
     img_cropped = img[int(top_y):int(bottom_y), int(left_x):int(right_x)]
 
     return img_cropped
+
+def plotImage(img, title=""):
+    # Display image
+    plt.imshow(img, cmap=plt.cm.gray, vmin=0, vmax=255)
+    plt.title(title)
+    plt.show()
