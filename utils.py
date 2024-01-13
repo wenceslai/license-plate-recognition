@@ -96,3 +96,8 @@ def fill_dashes(s):
         return None
 
 
+def is_close(value1, value2, margin_percent=20):
+    margin = margin_percent / 100.0
+    lower_bound = (1 - margin) * value2
+    upper_bound = (1 + margin) * value2
+    return lower_bound <= value1 <= upper_bound
