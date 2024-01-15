@@ -65,7 +65,7 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
                      striped_plate = utils.strip_of_dashes(plate)
                      if(len(striped_plate) == 6):
                          #output.write(plate + " ," + str(i) + "\n")
-                         #print("found " + plate + " " + str(i))
+                         print("found " + plate + " " + str(i))
                          correct_length_plates.append(striped_plate)
 
     voted_plates = voting.majority_voting(correct_length_plates)

@@ -42,12 +42,12 @@ def segment_and_recognize(plate_images):
 
 def preprocess(image):
 
-    cv2.imwrite(f"debug-images/test1.png", image)
+    #cv2.imwrite(f"debug-images/test1.png", image)
 
     # Zoom in to remove borders of the plate
     image = crop_by_percentage(image, 0.85, 0.7)
 
-    cv2.imwrite(f"debug-images/test2.png", image)
+    #cv2.imwrite(f"debug-images/test2.png", image)
 
     # Remove noise
     image = cv2.GaussianBlur(image, (3, 3), 0)
@@ -58,7 +58,7 @@ def preprocess(image):
     desired_width = int(aspect_ratio * desired_height)
     image = cv2.resize(image, (desired_width, desired_height))
 
-    cv2.imwrite(f"debug-images/test3.png", image)
+    #cv2.imwrite(f"debug-images/test3.png", image)
 
     # Convert to grayscale
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -66,13 +66,13 @@ def preprocess(image):
     # Histogram equalisation
     image = cv2.equalizeHist(image)
 
-    cv2.imwrite(f"debug-images/test4.png", image)
+    #cv2.imwrite(f"debug-images/test4.png", image)
 
     # Threshold to binarize the image
     #mask = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 2)  # INV because letters are black
     _, mask = cv2.threshold(image, 80, 255, cv2.THRESH_BINARY_INV)
 
-    cv2.imwrite(f"debug-images/test5.png", mask)
+    #cv2.imwrite(f"debug-images/test5.png", mask)
 
     # Apply erosion and dilation to remove noise
     kernel_size = 5
@@ -81,7 +81,7 @@ def preprocess(image):
     dilation_kernel = np.ones((kernel_size, kernel_size), np.uint8)
     mask = cv2.dilate(mask, dilation_kernel, iterations=1)
 
-    cv2.imwrite(f"debug-images/test6.png", mask)
+    #cv2.imwrite(f"debug-images/test6.png", mask)
 
     return mask
 
@@ -133,8 +133,8 @@ def crop(image):
 
         char_index_ranges[-1].append(image.shape[1] - 1)
 
-    for i, img in enumerate(chars_cropped):
-        cv2.imwrite(f"debug-images/croppedchar{i}.png", img)
+    #for i, img in enumerate(chars_cropped):
+        #cv2.imwrite(f"debug-images/croppedchar{i}.png", img)
 
     return chars_cropped
 

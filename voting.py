@@ -14,7 +14,6 @@ def majority_voting(plates):
         for key2 in dict:
             if key1 != key2:
                 if utils.similar_strings(key1, key2):
-                    print(key1+" "+str(dict[key1])+" "+key2+" "+str(dict[key2]) )
                     min_key = ""
                     if dict[key2] > dict[key1]:
                         min_key = key1
@@ -23,7 +22,6 @@ def majority_voting(plates):
                     if min_key not in keys_to_delete:
                         keys_to_delete.append(min_key)
 
-    print(keys_to_delete)
     for key in keys_to_delete:
         del dict[key]
 
