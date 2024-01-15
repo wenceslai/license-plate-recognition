@@ -31,7 +31,7 @@ def segment_and_recognize(plate_images):
         plate_string_dashes = fill_dashes(plate_string)
 
         if plate_string_dashes is None:
-            plate_string_dashes = plate_string + "(none)"
+            plate_string_dashes = plate_string# + "(none)"
 
         recognized_plates.append(plate_string_dashes)
 

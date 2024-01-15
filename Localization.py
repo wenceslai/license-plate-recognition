@@ -136,6 +136,8 @@ def find_rotation_angle(binarized_image):
 
     # Calculate the average angle of detected lines
     angles = []
+    if lines is None:
+        return 0
     for line in lines:
         rho, theta = line[0]
         angles.append(theta)

@@ -101,3 +101,30 @@ def is_close(value1, value2, margin_percent=20):
     lower_bound = (1 - margin) * value2
     upper_bound = (1 + margin) * value2
     return lower_bound <= value1 <= upper_bound
+
+def strip_of_dashes(plate):
+    return plate.replace('-', '')
+
+def similar_strings(str1, str2):
+    # Check if the lengths are different by more than 1
+    if abs(len(str1) - len(str2)) > 1:
+        return False
+
+    # Make sure the longer string is str1
+    if len(str1) < len(str2):
+        str1, str2 = str2, str1
+
+    differences = 0
+
+    # Compare each character in the strings
+    for char1, char2 in zip(str1, str2):
+        if char1 != char2:
+            differences += 1
+            if differences > 2:
+                return False  # More than 2 difference, not similar
+
+    # Check if the length difference is exactly 2
+    if len(str1) > len(str2):
+        differences += 1
+
+    return differences <= 2  # True if at most 2 difference

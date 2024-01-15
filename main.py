@@ -1,6 +1,7 @@
 import argparse
 import os
 import CaptureFrame_Process
+import Recognize
 import numpy
 
 
@@ -8,7 +9,7 @@ import numpy
 # for more information of 'argparse' module, see https://docs.python.org/3/library/argparse.html
 def get_args():
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--file_path', type=str, default='/Users/vaclavkubon/dev/ip-team-42/dataset/TrainingSet/Categorie I/Video10_2.avi')
+	parser.add_argument('--file_path', type=str, default='C:/Users/Pc/Desktop/License/dataset/trainingvideo.avi')
 	parser.add_argument('--output_path', type=str, default='dataset/Output.csv')
 	parser.add_argument('--sample_frequency', type=int, default=2)
 	args = parser.parse_args()
