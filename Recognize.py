@@ -26,6 +26,7 @@ def segment_and_recognize(plate_images):
 
     for image in plate_images:
         image = preprocess(image)
+        cv2.imwrite(f"debug-images/test1.png",image)
         char_images = crop(image)
         plate_string = recognise(char_images)
         plate_string_dashes = fill_dashes(plate_string)
@@ -35,7 +36,6 @@ def segment_and_recognize(plate_images):
 
         recognized_plates.append(plate_string_dashes)
 
-    # TODO: majority voting
 
     return recognized_plates
 
@@ -45,7 +45,7 @@ def preprocess(image):
     #cv2.imwrite(f"debug-images/test1.png", image)
 
     # Zoom in to remove borders of the plate
-    image = crop_by_percentage(image, 0.85, 0.7)
+    image = crop_by_percentage(image, 0.90, 0.65)
 
     #cv2.imwrite(f"debug-images/test2.png", image)
 
@@ -75,7 +75,7 @@ def preprocess(image):
     #cv2.imwrite(f"debug-images/test5.png", mask)
 
     # Apply erosion and dilation to remove noise
-    kernel_size = 5
+    kernel_size = 6
     erosion_kernel = np.ones((kernel_size, kernel_size), np.uint8)
     mask = cv2.erode(mask, erosion_kernel, iterations=1)
     dilation_kernel = np.ones((kernel_size, kernel_size), np.uint8)
@@ -189,8 +189,7 @@ def recogniseletter(image):
 
 if __name__ == "__main__":
     # This block will be executed only if the script is run directly
-    #plate = "96-ND-JB"
-    plate = "23-GSX-6"
+    plate = "96-ND-JB"
     #plate = "5-SXB-74"
     #plate = "01-XJ-ND"
 

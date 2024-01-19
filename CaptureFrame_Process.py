@@ -32,6 +32,8 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
 
     frame_interval = int(fps / sample_frequency)
 
+    print(frame_interval)
+
     frames = []
 
     for frame_count in range(0, total_frames, frame_interval):
@@ -49,6 +51,8 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
     output.write("License plate,Frame no.,Timestamp(seconds)\n")
 
     correct_length_plates = []
+
+    framedict = {}
     for frame in frames:
         i+=1
         if frame is not None:
@@ -62,16 +66,18 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
                 recognized_plates = Recognize.segment_and_recognize(plates)
 
                 for plate in recognized_plates:
-                     striped_plate = utils.strip_of_dashes(plate)
-                     if(len(striped_plate) == 6):
+                     #striped_plate = utils.strip_of_dashes(plate)
+                     if(len(plate) == 8):
                          #output.write(plate + " ," + str(i) + "\n")
                          print("found " + plate + " " + str(i))
-                         correct_length_plates.append(striped_plate)
+                         correct_length_plates.append(plate)
+                         if plate not in framedict:
+                             framedict[plate] = i * frame_interval
 
     voted_plates = voting.majority_voting(correct_length_plates)
 
     for voted_plate in voted_plates:
-         output.write(voted_plate + "\n")
+         output.write(voted_plate +"," + str(framedict[voted_plate]) +"," + str(framedict[voted_plate]/fps) + "\n")
          #print(voted_plate)
     print("done yeas")
 
