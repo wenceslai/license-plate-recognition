@@ -3,6 +3,8 @@ import os
 import pandas as pd
 import Localization
 import Recognize
+import utils
+import voting
 
 
 def CaptureFrame_Process(file_path, sample_frequency, save_path):
@@ -20,7 +22,7 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
     Output: None
     """
 
-    directory = r'output-images'
+    directory = r'testimages'
     # TODO: Read frames from the video (saved at `file_path`) by making use of `sample_frequency`
     video = cv2.VideoCapture(file_path)
 
@@ -43,19 +45,39 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
 
     # TODO: Implement actual algorithms for Localizing Plates
     i=-1
+    output = open(save_path, "w")
+    output.write("License plate,Frame no.,Timestamp(seconds)\n")
+
+    correct_length_plates = []
     for frame in frames:
         i+=1
-        plate, _ = Localization.plate_detection(frame)
+        if frame is not None:
+            plates = Localization.plate_detection(frame)
 
         # TODO: Implement actual algorithms for Recognizing Characters
-        if plate is not None:
-            cv2.imwrite(os.path.join(directory, 'im' + str(i)+'.jpg'), plate)
+            if plates is not None:
+                for plate in plates:
+                    cv2.imwrite(os.path.join(directory, 'image' + str(i)+'.jpg'), plate)
 
-        output = open(save_path, "w")
-        output.write("License plate,Frame no.,Timestamp(seconds)\n")
+                recognized_plates = Recognize.segment_and_recognize(plates)
+
+                for plate in recognized_plates:
+                     striped_plate = utils.strip_of_dashes(plate)
+                     if(len(striped_plate) == 6):
+                         #output.write(plate + " ," + str(i) + "\n")
+                         print("found " + plate + " " + str(i))
+                         correct_length_plates.append(striped_plate)
+
+    voted_plates = voting.majority_voting(correct_length_plates)
+
+    for voted_plate in voted_plates:
+         output.write(voted_plate + "\n")
+         #print(voted_plate)
+    print("done yeas")
+
 
         # TODO: REMOVE THESE (below) and write the actual values in `output`
-        output.write("XS-NB-23,34,1.822\n")
+        #output.write("XS-NB-23,34,1.822\n")
         # output.write("YOUR,STUFF,HERE\n")
         # TODO: REMOVE THESE (above) and write the actual values in `output`
 

@@ -9,8 +9,6 @@ annot = pd.read_csv("localization-ground-truth-boxes.csv")
 
 cols = ["image", "label"]
 
-val_samples = int(0.6 * len(annot))
-
 annot = annot[cols]
 
 annot["image"] = annot["image"].str.split('-').str[1]
