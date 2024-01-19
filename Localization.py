@@ -32,8 +32,7 @@ def plate_detection(image):
     # Preprocess and binarize
     mask = preprocess(image)
 
-    cv2.imwrite("debug-images/masksss.png", mask)
-
+    #cv2.imwrite("debug-images/masksss.png", mask)
 
     # Find the contour clusters
     contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -41,8 +40,6 @@ def plate_detection(image):
 
     # Filter out contours that are too small
     plates = [c for c in contours if cv2.contourArea(c) > 2000]  # TODO: Tune the area parameter
-
-    # TODO: deal with rotations
 
     # If no plate cluster were found terminate
     if len(plates) == 0:
@@ -54,6 +51,7 @@ def plate_detection(image):
     bbs = []
     last_contour_size = None
 
+    # Going over the 3 biggest contours, finding the first 1 or 2 valid ones
     while tries < 3 and tries < len(plates):
         # Fit the bounding box
         c = plates[tries]
@@ -65,10 +63,10 @@ def plate_detection(image):
         aspect_ratio = (max_x - min_x) / (max_y - min_y)
 
         # Check the aspect ratio
-        if aspect_ratio < 2 or aspect_ratio > 8:  # TODO: first rotate the plate, then check the ratio
+        if aspect_ratio < 2 or aspect_ratio > 8:
             tries += 1
         else:
-            if found_plates == 0:
+            if found_plates == 0:  # If no plates found yet save the size
                 last_contour_size = cv2.contourArea(c)
 
             if found_plates == 1 and not is_close(last_contour_size, cv2.contourArea(c), 50):  # The license plates should be similar to each other
@@ -82,6 +80,7 @@ def plate_detection(image):
 
             tries += 1
 
+    # If no plates found return None
     if len(bbs) == 0:
         return None
 
@@ -95,16 +94,39 @@ def plate_detection(image):
         mask_cropped = mask[min_y:max_y, min_x:max_x]
         angle = find_rotation_angle(mask_cropped)
         angle = angle - 90 if angle >= 0 else angle + 90
-        img_rotated = ndimage.rotate(img_cropped, angle, reshape=True)
+        img_rotated = ndimage.rotate(img_cropped, angle, reshape=False)
+
+       #cv2.imwrite(f"debug-images/test1{time.time()}.png", img_rotated)
+
+        if angle > 10:
+            img_rotated = crop_after_rotation(img_rotated)
 
         results.append(img_rotated)
 
-        #cv2.imwrite(f"debug-images/test1{time.time()}.png", img_cropped)
         #cv2.imwrite(f"debug-images/test2{time.time()}.png", img_rotated)
 
     # TODO: Sharpen in the image?
 
     return results
+
+
+def crop_after_rotation(img):
+    mask = preprocess(img)
+
+    contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)
+
+    plate = contours[0]
+    x = plate[:, :, 0]
+    y = plate[:, :, 1]
+    min_x, max_x, min_y, max_y = int(min(x)), int(max(x)), int(min(y)), int(max(y))
+    img_cropped = img[min_y:max_y, min_x:max_x]
+
+    # Create a mask to identify black pixels and replace with orange
+    mask = np.all(img_cropped == np.array([0, 0, 0]), axis=-1)
+    img_cropped[mask] = [50, 165, 255]  # BGR values for orange
+
+    return img_cropped
 
 
 def preprocess(image):
@@ -169,6 +191,6 @@ def find_rotation_angle(binarized_image):
 
 if __name__ == "__main__":
     f = "cat1img8.png"
-    img = cv2.imread("twoplates.png", cv2.IMREAD_UNCHANGED)
+    img = cv2.imread(os.path.join("training-images/Categorie1", f), cv2.IMREAD_UNCHANGED)
 
     plate_detection(img)
