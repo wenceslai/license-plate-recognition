@@ -25,16 +25,18 @@ def segment_and_recognize(plate_images):
     recognized_plates = []
 
     for image in plate_images:
+        cv2.imwrite(f"debug-images/test1.png", image)
         image = preprocess(image)
-        cv2.imwrite(f"debug-images/test1.png",image)
+        cv2.imwrite(f"debug-images/test2.png",image)
         char_images = crop(image)
         plate_string = recognise(char_images)
-        plate_string_dashes = fill_dashes(plate_string)
+        #plate_string_dashes = fill_dashes(plate_string)
 
-        if plate_string_dashes is None:
-            plate_string_dashes = plate_string# + "(none)"
+        #if plate_string_dashes is None:
+            #plate_string_dashes = plate_string# + "(none)"
 
-        recognized_plates.append(plate_string_dashes)
+        #print(plate_string_dashes)
+        recognized_plates.append(plate_string)
 
 
     return recognized_plates
@@ -189,7 +191,7 @@ def recogniseletter(image):
 
 if __name__ == "__main__":
     # This block will be executed only if the script is run directly
-    plate = "96-ND-JB"
+    plate = "56-JTT-5"
     #plate = "5-SXB-74"
     #plate = "01-XJ-ND"
 

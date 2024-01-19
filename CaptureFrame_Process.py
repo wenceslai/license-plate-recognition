@@ -67,17 +67,23 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
 
                 for plate in recognized_plates:
                      #striped_plate = utils.strip_of_dashes(plate)
-                     if(len(plate) == 8):
+                     if(len(plate) == 6):
                          #output.write(plate + " ," + str(i) + "\n")
                          print("found " + plate + " " + str(i))
                          correct_length_plates.append(plate)
+                         if plate == "93PX59":
+                             print("wtf")
+                         if plate == "VJPXS9":
+                             print("wtfff")
                          if plate not in framedict:
                              framedict[plate] = i * frame_interval
 
     voted_plates = voting.majority_voting(correct_length_plates)
 
     for voted_plate in voted_plates:
-         output.write(voted_plate +"," + str(framedict[voted_plate]) +"," + str(framedict[voted_plate]/fps) + "\n")
+         dashed_plate = utils.fill_dashes(voted_plate)
+         print(voted_plate)
+         output.write(dashed_plate +"," + str(framedict[voted_plate]) +"," + str(framedict[voted_plate]/fps) + "\n")
          #print(voted_plate)
     print("done yeas")
 
