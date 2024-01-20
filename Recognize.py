@@ -38,8 +38,8 @@ def segment_and_recognize(plate_images):
             #plate_string_dashes = plate_string# + "(none)"
 
         #print(plate_string)
-        #if(utils.is_correct_format(plate_string)):
-        recognized_plates.append(plate_string)
+        if(utils.is_correct_format(plate_string)):
+            recognized_plates.append(plate_string)
 
 
     return recognized_plates
