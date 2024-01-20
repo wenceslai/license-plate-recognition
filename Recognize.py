@@ -27,9 +27,10 @@ def segment_and_recognize(plate_images):
     recognized_plates = []
 
     for image in plate_images:
-        cv2.imwrite(f"debug-images/test1.png", image)
+        #cv2.imwrite(f"debug-images/test1.png", image)
         image = preprocess(image)
-        cv2.imwrite(f"debug-images/test2.png",image)
+        #cv2.imwrite(f"debug-images/test2.png",image)
+        #plotImage(image)
         char_images = crop(image)
         plate_string = recognise(char_images)
         #plate_string_dashes = fill_dashes(plate_string)
@@ -72,19 +73,22 @@ def preprocess(image):
     image = cv2.equalizeHist(image)
 
     #cv2.imwrite(f"debug-images/test4.png", image)
+    #plotImage(image)
 
     # Threshold to binarize the image
     #mask = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 2)  # INV because letters are black
     _, mask = cv2.threshold(image, 80, 255, cv2.THRESH_BINARY_INV)
 
     #cv2.imwrite(f"debug-images/test5.png", mask)
+    #plotImage(mask)
 
     # Apply erosion and dilation to remove noise
-    kernel_size = 6
+    kernel_size = 5
     erosion_kernel = np.ones((kernel_size, kernel_size), np.uint8)
     mask = cv2.erode(mask, erosion_kernel, iterations=1)
     dilation_kernel = np.ones((kernel_size, kernel_size), np.uint8)
     mask = cv2.dilate(mask, dilation_kernel, iterations=1)
+
 
     #cv2.imwrite(f"debug-images/test6.png", mask)
 
@@ -159,6 +163,9 @@ def lowest_score(test_image, character_set, reference_characters):
     ans = None
     for char in character_set:
         resized_reference=cv2.resize(reference_characters[char], (70, 85))
+        kernel_size = 3
+        kernel = np.ones((kernel_size, kernel_size), np.uint8)
+        resized_reference = cv2.dilate( resized_reference, kernel, iterations=1)
         score = difference_score(test_image,resized_reference)
         if score < mini:
             mini = score
@@ -187,7 +194,9 @@ def recogniseletter(image):
         reference_characters[char] = cv2.imread(os.path.join("dataset", "CharactersDifferentSizes", char + ".bmp"), cv2.IMREAD_GRAYSCALE)
 
     result = lowest_score(resized_image, total_set, reference_characters)
-    resized_reference = cv2.resize(reference_characters[result], (70, 85))
+
+    #resized_reference = cv2.resize(reference_characters[result], (70, 85))
+
     #plotImage(resized_reference)
     return result
 

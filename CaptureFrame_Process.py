@@ -69,7 +69,7 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
                      #striped_plate = utils.strip_of_dashes(plate)
                      if(len(plate) == 6):
                          #output.write(plate + " ," + str(i) + "\n")
-                         print("found " + plate + " " + str(i))
+                         #print("found " + plate + " " + str(i))
                          correct_length_plates.append(plate)
                          if plate not in framedict:
                              framedict[plate] = i * frame_interval

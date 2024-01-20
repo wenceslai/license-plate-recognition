@@ -154,24 +154,35 @@ def preprocess(image):
 
 def find_rotation_angle(binarized_image):
     # Perform Hough Line Transform
-    lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=150)
+    lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=175)
     # Calculate the average angle of detected lines
     angles = []
     if lines is None:
+        lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=150)
+    elif len(lines) < 25:
+        lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=150)
+    if lines is None:
         lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=125)
-    elif len(lines) < 50:
+    elif len(lines) < 25:
         lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=125)
-    if lines is not None:
-        print(len(lines))
     if lines is None:
         lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=100)
-    elif len(lines) < 50:
+    elif len(lines) < 25:
         lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=100)
     if lines is None:
         lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=75)
-    elif len(lines) < 50:
+    elif len(lines) < 25:
         lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=75)
+    if lines is None:
+        lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=50)
+    elif len(lines) < 25:
+        lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=50)
+    if lines is None:
+        lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=25)
+    elif len(lines) < 25:
+        lines = cv2.HoughLines(binarized_image, 1, np.pi / 180, threshold=25)
 
+    #print(len(lines))
     if lines is None:
         print("no lines found")
         return 1
