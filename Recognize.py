@@ -3,6 +3,8 @@ import time
 import cv2
 import numpy as np
 import os
+
+import utils
 from utils import crop_by_percentage, plotImage, fill_dashes
 
 
@@ -35,7 +37,8 @@ def segment_and_recognize(plate_images):
         #if plate_string_dashes is None:
             #plate_string_dashes = plate_string# + "(none)"
 
-        #print(plate_string_dashes)
+        #print(plate_string)
+        #if(utils.is_correct_format(plate_string)):
         recognized_plates.append(plate_string)
 
 

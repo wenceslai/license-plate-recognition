@@ -131,3 +131,46 @@ def similar_strings(str1, str2):
 
     return differences <= 2  # True if at most 2 difference
 
+def is_correct_format(s):
+    if len(s) != 6: return None
+
+    if re.search(r'\d{2}[A-Z]{4}', s):
+        return True
+
+    elif re.search(r'\d{2}[A-Z]{2}\d{2}', s):
+        return True
+
+    elif re.search(r'\d{2}[A-Z]{3}\d{1}', s):
+        return True
+
+    elif re.search(r'\d{1}[A-Z]{3}\d{2}', s):
+        return True
+
+    elif re.search(r'[A-Z]{2}\d{3}[A-Z]', s):
+        return True
+
+    elif re.search(r'[A-Z]\d{3}[A-Z]{2}', s):
+        return True
+
+    elif re.search(r'[A-Z]{3}\d{2}[A-Z]', s):
+        return True
+
+    elif re.search(r'[A-Z]{1}\d{2}[A-Z]{3}', s):
+        return True
+
+    elif re.search(r'\d{1}[A-Z]{2}\d{3}', s):
+        return True
+
+    elif re.search(r'\d{3}[A-Z]{2}\d{1}', s):
+        return True
+
+    elif re.search(r'[A-Z]{2}\d{2}[A-Z]{2}', s):
+        return True
+
+    elif re.search(r'[A-Z]{4}\d{2}', s):
+        return True
+
+    else:
+        return False
+
+

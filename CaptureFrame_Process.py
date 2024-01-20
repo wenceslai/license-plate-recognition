@@ -71,10 +71,6 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
                          #output.write(plate + " ," + str(i) + "\n")
                          print("found " + plate + " " + str(i))
                          correct_length_plates.append(plate)
-                         if plate == "93PX59":
-                             print("wtf")
-                         if plate == "VJPXS9":
-                             print("wtfff")
                          if plate not in framedict:
                              framedict[plate] = i * frame_interval
 
@@ -82,9 +78,9 @@ def CaptureFrame_Process(file_path, sample_frequency, save_path):
 
     for voted_plate in voted_plates:
          dashed_plate = utils.fill_dashes(voted_plate)
-         print(voted_plate)
-         output.write(dashed_plate +"," + str(framedict[voted_plate]) +"," + str(framedict[voted_plate]/fps) + "\n")
-         #print(voted_plate)
+         if dashed_plate != None:
+            output.write(dashed_plate +"," + str(framedict[voted_plate]) +"," + str(framedict[voted_plate]/fps) + "\n")
+            print(dashed_plate)
     print("done yeas")
 
 
