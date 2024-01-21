@@ -2,8 +2,10 @@ import os
 import re
 from datetime import timedelta
 
-
+import cv2
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 def intersection_over_union(box_a, box_b):
     """
@@ -173,4 +175,24 @@ def is_correct_format(s):
     else:
         return False
 
+def isodata_thresholding(image, epsilon = 2):
+    # Compute the histogram and set up variables
+    hist = np.array(cv2.calcHist([image], [0], None, [256], [0, 256])).flatten()
+    tau = np.random.randint(hist.nonzero()[0][0], 256 - hist[::-1].nonzero()[0][0])
+    old_tau = -2*epsilon
+    print(tau)
+    # Iterations of the isodata thresholding algorithm
+    while(abs(tau - old_tau) >= epsilon):
+        #TODO Calculate m1
+        m1 = image[np.where(image < tau)].mean()
+        #TODO Calculate m2
+        m2 = image[np.where(image >= tau)].mean()
+        old_tau = tau
+        tau = (m1 + m2) / 2
 
+    #TODO Threshold the image based on last tau
+    background = np.zeros(image.shape)
+    background[np.where(image < tau)] = 255
+    foreground = np.ones(image.shape)
+    foreground[np.where(image >= tau)] = 255
+    return background, foreground, tau

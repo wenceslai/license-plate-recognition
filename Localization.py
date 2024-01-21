@@ -32,17 +32,18 @@ def plate_detection(image):
     # Preprocess and binarize
     mask = preprocess(image)
 
-    #cv2.imwrite("debug-images/masksss.png", mask)
+    #cv2.imwrite("debug-images/maskss.png", mask)
 
     # Find the contour clusters
     contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
 
     # Filter out contours that are too small
-    plates = [c for c in contours if cv2.contourArea(c) > 2000]  # TODO: Tune the area parameter
+    plates = [c for c in contours if cv2.contourArea(c) > 1000]  # TODO: Tune the area parameter
 
     # If no plate cluster were found terminate
     if len(plates) == 0:
+        print("no big enough contour found")
         return None
 
     # Iterate over top 5 biggest clusters and try to find one with a matching aspect ratio
@@ -52,7 +53,7 @@ def plate_detection(image):
     last_contour_size = None
 
     # Going over the 3 biggest contours, finding the first 1 or 2 valid ones
-    while tries < 3 and tries < len(plates):
+    while tries < 5 and tries < len(plates):
         # Fit the bounding box
         c = plates[tries]
         x = c[:, :, 0]
@@ -69,7 +70,7 @@ def plate_detection(image):
             if found_plates == 0:  # If no plates found yet save the size
                 last_contour_size = cv2.contourArea(c)
 
-            if found_plates == 1 and not is_close(last_contour_size, cv2.contourArea(c), 50):  # The license plates should be similar to each other
+            if found_plates == 1 and not is_close(last_contour_size, cv2.contourArea(c), 70):  # The license plates should be similar to each other
                 break
 
             bbs.append([min_x, min_y, max_x, max_y])
@@ -82,6 +83,7 @@ def plate_detection(image):
 
     # If no plates found return None
     if len(bbs) == 0:
+        print("no bb found in contours")
         return None
 
     results = []
@@ -98,8 +100,7 @@ def plate_detection(image):
 
        #cv2.imwrite(f"debug-images/test1{time.time()}.png", img_rotated)
 
-        if angle > 10:
-            img_rotated = crop_after_rotation(img_rotated)
+        img_rotated = crop_after_rotation(img_rotated)
 
         results.append(img_rotated)
 

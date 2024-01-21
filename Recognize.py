@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 import utils
-from utils import crop_by_percentage, plotImage, fill_dashes
+from utils import crop_by_percentage, plotImage, fill_dashes, isodata_thresholding
 
 
 def segment_and_recognize(plate_images):
@@ -56,7 +56,8 @@ def preprocess(image):
     #cv2.imwrite(f"debug-images/test2.png", image)
 
     # Remove noise
-    image = cv2.GaussianBlur(image, (3, 3), 0)
+    #image = cv2.GaussianBlur(image, (3, 3), 0)
+
 
     # Resize to height of x pixels
     desired_height = 70
@@ -77,7 +78,9 @@ def preprocess(image):
 
     # Threshold to binarize the image
     #mask = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 2)  # INV because letters are black
-    _, mask = cv2.threshold(image, 80, 255, cv2.THRESH_BINARY_INV)
+    _, mask = cv2.threshold(image, 80, 255, cv2.THRESH_BINARY_INV)  # was 80
+
+    #cv2.imwrite("debug-images/maskrecog.png", mask)
 
     #cv2.imwrite(f"debug-images/test5.png", mask)
     #plotImage(mask)
@@ -143,7 +146,7 @@ def crop(image):
         char_index_ranges[-1].append(image.shape[1] - 1)
 
     #for i, img in enumerate(chars_cropped):
-        #cv2.imwrite(f"debug-images/croppedchar{i}.png", img)
+        #cv2.imwrite(f"debug-images/croppedchar{i}_{time.time()}.png", img)
 
     return chars_cropped
 

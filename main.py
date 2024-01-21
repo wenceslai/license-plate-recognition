@@ -9,9 +9,9 @@ import numpy
 # for more information of 'argparse' module, see https://docs.python.org/3/library/argparse.html
 def get_args():
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--file_path', type=str, default='C:/Users/Pc/Desktop/License/dataset/TrainingSet/Categorie I/Video2_2.avi')
+	parser.add_argument('--file_path', type=str, default='dataset/trainingvideo.avi')
 	parser.add_argument('--output_path', type=str, default='dataset/Output.csv')
-	parser.add_argument('--sample_frequency', type=int, default=6)
+	parser.add_argument('--sample_frequency', type=int, default=12)
 	args = parser.parse_args()
 	return args
 
